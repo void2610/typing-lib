@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using R3;
-using UnityEngine;
 using Void2610.TypingLib.Core.Interfaces;
 using Void2610.TypingLib.Core.Models;
 
@@ -22,6 +21,7 @@ namespace Void2610.TypingLib.Services
         public Observable<SessionCompletedEvent> OnSessionCompleted => _onSessionCompleted;
 
         private readonly IInputValidator _inputValidator;
+        private readonly TypingSessionSettings _settings;
         private readonly CompositeDisposable _disposables = new();
 
         private readonly ReactiveProperty<TypingQuestion> _currentQuestion = new(null);
@@ -40,9 +40,15 @@ namespace Void2610.TypingLib.Services
         private int _currentQuestionCorrectCount;
         private int _currentQuestionMissCount;
 
-        public TypingSession(IInputValidator inputValidator)
+        public TypingSession(IInputValidator inputValidator) : this(inputValidator, TypingSessionSettings.Default)
+        {
+        }
+
+        public TypingSession(IInputValidator inputValidator, TypingSessionSettings settings)
         {
             _inputValidator = inputValidator;
+            _settings = settings;
+            _inputValidator.IsCaseSensitive = settings.CaseSensitive;
 
             _disposables.Add(_currentQuestion);
             _disposables.Add(_progress);
@@ -65,6 +71,8 @@ namespace Void2610.TypingLib.Services
 
             _currentQuestion.Value = _questions[0];
             _state.Value = SessionState.Running;
+
+            SkipCharactersAtCurrentPosition();
             UpdateProgress();
         }
 
@@ -89,6 +97,8 @@ namespace Void2610.TypingLib.Services
                 _currentPosition++;
                 _totalCorrectCount++;
                 _currentQuestionCorrectCount++;
+
+                SkipCharactersAtCurrentPosition();
             }
             else
             {
@@ -149,6 +159,32 @@ namespace Void2610.TypingLib.Services
             _disposables.Dispose();
         }
 
+        private void SkipCharactersAtCurrentPosition()
+        {
+            var currentQ = _currentQuestion.Value;
+            while (_currentPosition < currentQ.Length && ShouldSkip(currentQ.InputText[_currentPosition]))
+            {
+                _currentPosition++;
+            }
+        }
+
+        private bool ShouldSkip(char c)
+        {
+            if (_settings.SkipWhitespace && char.IsWhiteSpace(c))
+            {
+                return true;
+            }
+
+            if (_settings.SkipSymbols && IsSymbol(c))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool IsSymbol(char c) => char.IsPunctuation(c) || char.IsSymbol(c);
+
         private void OnCurrentQuestionCompleted()
         {
             var completedQuestion = _currentQuestion.Value;
@@ -187,6 +223,8 @@ namespace Void2610.TypingLib.Services
             _currentQuestionCorrectCount = 0;
             _currentQuestionMissCount = 0;
             _currentQuestion.Value = _questions[_currentQuestionIndex];
+
+            SkipCharactersAtCurrentPosition();
             UpdateProgress();
         }
 
