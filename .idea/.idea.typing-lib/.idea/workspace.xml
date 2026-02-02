@@ -5,8 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7fe1dea8-ffca-4182-b608-ef07216fea55" name="変更" comment="">
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TypingGame/TypingGameLifetimeScope.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/TypingGame/TypingGameLifetimeScope.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TypingLib/Extensions/VContainerExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/TypingLib/Extensions/VContainerExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.typing-lib/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.typing-lib/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TypingGame/TypingGamePresenter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/TypingGame/TypingGamePresenter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TypingLib/Core/Interfaces/ITypingSession.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/TypingLib/Core/Interfaces/ITypingSession.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TypingLib/Core/Models/TypingEvents.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TypingLib/Core/Models/TypingEvents.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TypingLib/Core/Models/TypingProgress.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TypingLib/Core/Models/TypingProgress.cs.meta" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/TypingLib/Services/TypingSession.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/TypingLib/Services/TypingSession.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -99,7 +104,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1770050727968</updated>
-      <workItem from="1770050739687" duration="8003000" />
+      <workItem from="1770050739687" duration="8705000" />
     </task>
     <servers />
   </component>

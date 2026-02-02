@@ -10,67 +10,35 @@ namespace Void2610.TypingLib.Core.Interfaces
     /// </summary>
     public interface ITypingSession : IDisposable
     {
-        /// <summary>
-        /// 現在の問題
-        /// </summary>
         ReadOnlyReactiveProperty<TypingQuestion> CurrentQuestion { get; }
-
-        /// <summary>
-        /// 現在の進捗
-        /// </summary>
-        ReadOnlyReactiveProperty<TypingProgress> Progress { get; }
-
-        /// <summary>
-        /// セッションの状態
-        /// </summary>
+        ReadOnlyReactiveProperty<int> CurrentPosition { get; }
         ReadOnlyReactiveProperty<SessionState> State { get; }
 
         /// <summary>
-        /// 文字入力イベントストリーム
+        /// 現在期待される文字（セッション未開始や完了時はnull）
         /// </summary>
-        Observable<CharacterInputEvent> OnCharacterInput { get; }
+        char? ExpectedChar { get; }
 
         /// <summary>
-        /// 問題完了イベントストリーム
+        /// 入力イベント（正誤判定結果）
         /// </summary>
-        Observable<QuestionCompletedEvent> OnQuestionCompleted { get; }
+        Observable<InputResult> OnInput { get; }
 
         /// <summary>
-        /// セッション完了イベントストリーム
+        /// 問題完了イベント（完了した問題を通知）
         /// </summary>
-        Observable<SessionCompletedEvent> OnSessionCompleted { get; }
+        Observable<TypingQuestion> OnQuestionCompleted { get; }
 
         /// <summary>
-        /// セッションを開始する
+        /// セッション完了イベント
         /// </summary>
-        /// <param name="questions">タイピング問題のリスト</param>
+        Observable<Unit> OnSessionCompleted { get; }
+
         void StartSession(IEnumerable<TypingQuestion> questions);
-
-        /// <summary>
-        /// 入力を処理する
-        /// </summary>
-        /// <param name="input">入力文字</param>
-        /// <returns>入力結果</returns>
         InputResult ProcessInput(char input);
-
-        /// <summary>
-        /// セッションを一時停止する
-        /// </summary>
+        void NextQuestion();
         void Pause();
-
-        /// <summary>
-        /// セッションを再開する
-        /// </summary>
         void Resume();
-
-        /// <summary>
-        /// セッションを終了する
-        /// </summary>
         void EndSession();
-
-        /// <summary>
-        /// 現在の問題をスキップする
-        /// </summary>
-        void SkipCurrentQuestion();
     }
 }

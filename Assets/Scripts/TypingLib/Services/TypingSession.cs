@@ -13,32 +13,38 @@ namespace Void2610.TypingLib.Services
     public class TypingSession : ITypingSession
     {
         public ReadOnlyReactiveProperty<TypingQuestion> CurrentQuestion => _currentQuestion;
-        public ReadOnlyReactiveProperty<TypingProgress> Progress => _progress;
+        public ReadOnlyReactiveProperty<int> CurrentPosition => _currentPosition;
         public ReadOnlyReactiveProperty<SessionState> State => _state;
 
-        public Observable<CharacterInputEvent> OnCharacterInput => _onCharacterInput;
-        public Observable<QuestionCompletedEvent> OnQuestionCompleted => _onQuestionCompleted;
-        public Observable<SessionCompletedEvent> OnSessionCompleted => _onSessionCompleted;
+        public char? ExpectedChar
+        {
+            get
+            {
+                var q = _currentQuestion.CurrentValue;
+                var pos = _currentPosition.CurrentValue;
+                if (q == null || pos >= q.Length) return null;
+                return q.InputText[pos];
+            }
+        }
+
+        public Observable<InputResult> OnInput => _onInput;
+        public Observable<TypingQuestion> OnQuestionCompleted => _onQuestionCompleted;
+        public Observable<Unit> OnSessionCompleted => _onSessionCompleted;
 
         private readonly IInputValidator _inputValidator;
         private readonly TypingSessionSettings _settings;
         private readonly CompositeDisposable _disposables = new();
 
         private readonly ReactiveProperty<TypingQuestion> _currentQuestion = new(null);
-        private readonly ReactiveProperty<TypingProgress> _progress = new(TypingProgress.Initial());
+        private readonly ReactiveProperty<int> _currentPosition = new(0);
         private readonly ReactiveProperty<SessionState> _state = new(SessionState.Idle);
 
-        private readonly Subject<CharacterInputEvent> _onCharacterInput = new();
-        private readonly Subject<QuestionCompletedEvent> _onQuestionCompleted = new();
-        private readonly Subject<SessionCompletedEvent> _onSessionCompleted = new();
+        private readonly Subject<InputResult> _onInput = new();
+        private readonly Subject<TypingQuestion> _onQuestionCompleted = new();
+        private readonly Subject<Unit> _onSessionCompleted = new();
 
         private List<TypingQuestion> _questions = new();
         private int _currentQuestionIndex;
-        private int _currentPosition;
-        private int _totalCorrectCount;
-        private int _totalMissCount;
-        private int _currentQuestionCorrectCount;
-        private int _currentQuestionMissCount;
 
         public TypingSession(IInputValidator inputValidator) : this(inputValidator, TypingSessionSettings.Default)
         {
@@ -51,9 +57,9 @@ namespace Void2610.TypingLib.Services
             _inputValidator.IsCaseSensitive = settings.CaseSensitive;
 
             _disposables.Add(_currentQuestion);
-            _disposables.Add(_progress);
+            _disposables.Add(_currentPosition);
             _disposables.Add(_state);
-            _disposables.Add(_onCharacterInput);
+            _disposables.Add(_onInput);
             _disposables.Add(_onQuestionCompleted);
             _disposables.Add(_onSessionCompleted);
         }
@@ -61,66 +67,58 @@ namespace Void2610.TypingLib.Services
         public void StartSession(IEnumerable<TypingQuestion> questions)
         {
             _questions = questions.ToList();
-
             _currentQuestionIndex = 0;
-            _currentPosition = 0;
-            _totalCorrectCount = 0;
-            _totalMissCount = 0;
-            _currentQuestionCorrectCount = 0;
-            _currentQuestionMissCount = 0;
-
+            _currentPosition.Value = 0;
             _currentQuestion.Value = _questions[0];
             _state.Value = SessionState.Running;
 
             SkipCharactersAtCurrentPosition();
-            UpdateProgress();
         }
 
         public InputResult ProcessInput(char input)
         {
-            if (_state.Value != SessionState.Running)
+            if (_state.CurrentValue != SessionState.Running)
             {
                 return InputResult.Ignored(input);
             }
 
-            var currentQ = _currentQuestion.Value;
-            if (_currentPosition >= currentQ.Length)
+            var currentQ = _currentQuestion.CurrentValue;
+            if (_currentPosition.CurrentValue >= currentQ.Length)
             {
                 return InputResult.Ignored(input);
             }
 
-            var expectedChar = currentQ.InputText[_currentPosition];
+            var expectedChar = currentQ.InputText[_currentPosition.CurrentValue];
             var result = _inputValidator.Validate(input, expectedChar);
 
             if (result.IsCorrect)
             {
-                _currentPosition++;
-                _totalCorrectCount++;
-                _currentQuestionCorrectCount++;
-
+                _currentPosition.Value++;
                 SkipCharactersAtCurrentPosition();
-            }
-            else
-            {
-                _totalMissCount++;
-                _currentQuestionMissCount++;
-            }
 
-            UpdateProgress();
-
-            _onCharacterInput.OnNext(new CharacterInputEvent(result, _progress.Value));
-
-            if (result.IsCorrect && _currentPosition >= currentQ.Length)
-            {
-                OnCurrentQuestionCompleted();
+                if (_currentPosition.CurrentValue >= currentQ.Length)
+                {
+                    HandleQuestionCompleted();
+                }
             }
 
+            _onInput.OnNext(result);
             return result;
+        }
+
+        public void NextQuestion()
+        {
+            if (_state.CurrentValue != SessionState.Running && _state.CurrentValue != SessionState.Paused)
+            {
+                return;
+            }
+
+            MoveToNextQuestion();
         }
 
         public void Pause()
         {
-            if (_state.Value == SessionState.Running)
+            if (_state.CurrentValue == SessionState.Running)
             {
                 _state.Value = SessionState.Paused;
             }
@@ -128,7 +126,7 @@ namespace Void2610.TypingLib.Services
 
         public void Resume()
         {
-            if (_state.Value == SessionState.Paused)
+            if (_state.CurrentValue == SessionState.Paused)
             {
                 _state.Value = SessionState.Running;
             }
@@ -136,22 +134,13 @@ namespace Void2610.TypingLib.Services
 
         public void EndSession()
         {
-            if (_state.Value is SessionState.Idle or SessionState.Completed)
+            if (_state.CurrentValue is SessionState.Idle or SessionState.Completed)
             {
                 return;
             }
 
-            CompleteSession();
-        }
-
-        public void SkipCurrentQuestion()
-        {
-            if (_state.Value != SessionState.Running && _state.Value != SessionState.Paused)
-            {
-                return;
-            }
-
-            MoveToNextQuestion();
+            _state.Value = SessionState.Completed;
+            _onSessionCompleted.OnNext(Unit.Default);
         }
 
         public void Dispose()
@@ -161,10 +150,10 @@ namespace Void2610.TypingLib.Services
 
         private void SkipCharactersAtCurrentPosition()
         {
-            var currentQ = _currentQuestion.Value;
-            while (_currentPosition < currentQ.Length && ShouldSkip(currentQ.InputText[_currentPosition]))
+            var currentQ = _currentQuestion.CurrentValue;
+            while (_currentPosition.CurrentValue < currentQ.Length && ShouldSkip(currentQ.InputText[_currentPosition.CurrentValue]))
             {
-                _currentPosition++;
+                _currentPosition.Value++;
             }
         }
 
@@ -185,23 +174,17 @@ namespace Void2610.TypingLib.Services
 
         private static bool IsSymbol(char c) => char.IsPunctuation(c) || char.IsSymbol(c);
 
-        private void OnCurrentQuestionCompleted()
+        private void HandleQuestionCompleted()
         {
-            var completedQuestion = _currentQuestion.Value;
+            var completedQuestion = _currentQuestion.CurrentValue;
             var isLastQuestion = _currentQuestionIndex >= _questions.Count - 1;
-            var nextIndex = _currentQuestionIndex + 1;
 
-            _onQuestionCompleted.OnNext(new QuestionCompletedEvent(
-                completedQuestion,
-                _currentQuestionCorrectCount,
-                _currentQuestionMissCount,
-                nextIndex,
-                isLastQuestion
-            ));
+            _onQuestionCompleted.OnNext(completedQuestion);
 
             if (isLastQuestion)
             {
-                CompleteSession();
+                _state.Value = SessionState.Completed;
+                _onSessionCompleted.OnNext(Unit.Default);
             }
             else
             {
@@ -215,46 +198,14 @@ namespace Void2610.TypingLib.Services
 
             if (_currentQuestionIndex >= _questions.Count)
             {
-                CompleteSession();
+                _state.Value = SessionState.Completed;
+                _onSessionCompleted.OnNext(Unit.Default);
                 return;
             }
 
-            _currentPosition = 0;
-            _currentQuestionCorrectCount = 0;
-            _currentQuestionMissCount = 0;
+            _currentPosition.Value = 0;
             _currentQuestion.Value = _questions[_currentQuestionIndex];
-
             SkipCharactersAtCurrentPosition();
-            UpdateProgress();
-        }
-
-        private void CompleteSession()
-        {
-            _state.Value = SessionState.Completed;
-
-            _onSessionCompleted.OnNext(new SessionCompletedEvent(
-                _totalCorrectCount,
-                _totalMissCount,
-                _currentQuestionIndex + 1,
-                _questions.Count
-            ));
-        }
-
-        private void UpdateProgress()
-        {
-            var currentQ = _currentQuestion.Value;
-            var inputText = currentQ.InputText;
-
-            _progress.Value = new TypingProgress(
-                _currentQuestionIndex,
-                _questions.Count,
-                _currentPosition,
-                currentQ.Length,
-                _totalCorrectCount,
-                _totalMissCount,
-                inputText.Substring(0, _currentPosition),
-                _currentPosition < inputText.Length ? inputText.Substring(_currentPosition) : string.Empty
-            );
         }
     }
 }
