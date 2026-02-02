@@ -52,12 +52,6 @@ namespace Void2610.TypingGame
             }
         }
 
-        public void Dispose()
-        {
-            _disposables.Dispose();
-            _session.Dispose();
-        }
-
         private async UniTask WaitAndStartSession()
         {
             await UniTask.WaitUntil(() => Input.anyKeyDown);
@@ -81,11 +75,8 @@ namespace Void2610.TypingGame
         {
             if (result.IsIgnored) return;
 
-            if (result.IsCorrect)
-                _correctCount++;
-            else
-                _missCount++;
-
+            if (result.IsCorrect) _correctCount++;
+            else _missCount++;
             UpdateStatus();
         }
 
@@ -132,6 +123,12 @@ namespace Void2610.TypingGame
                 new("Programming is fun!"),
                 new("Unity Game Engine"),
             };
+        }
+        
+        public void Dispose()
+        {
+            _disposables.Dispose();
+            _session.Dispose();
         }
     }
 }
