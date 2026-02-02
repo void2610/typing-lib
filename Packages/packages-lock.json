@@ -143,7 +143,7 @@
       }
     },
     "com.unity.ide.rider": {
-      "version": "3.0.37",
+      "version": "3.0.39",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -270,6 +270,14 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.textmeshpro": {
+      "version": "5.0.0",
+      "depth": 1,
+      "source": "builtin",
+      "dependencies": {
+        "com.unity.ugui": "2.0.0"
+      }
+    },
     "com.unity.timeline": {
       "version": "1.8.9",
       "depth": 0,
@@ -300,6 +308,17 @@
         "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
+    },
+    "com.void2610.unity-template": {
+      "version": "https://github.com/void2610/my-unity-template.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.render-pipelines.universal": "14.0.0",
+        "com.unity.textmeshpro": "3.0.6",
+        "com.unity.inputsystem": "1.5.0"
+      },
+      "hash": "06c86a519be33e07c5bf194ef39678395b62a16c"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
