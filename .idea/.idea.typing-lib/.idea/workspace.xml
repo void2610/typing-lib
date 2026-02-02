@@ -7,7 +7,8 @@
     <list default="true" id="7fe1dea8-ffca-4182-b608-ef07216fea55" name="変更" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.typing-lib/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.typing-lib/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/EditorSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/EditorSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TypingLib/Core/Models/SessionState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/TypingLib/Core/Models/SessionState.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TypingLib/Services/TypingSession.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/TypingLib/Services/TypingSession.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,7 +100,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1770050727968</updated>
-      <workItem from="1770050739687" duration="5236000" />
+      <workItem from="1770050739687" duration="7687000" />
     </task>
     <servers />
   </component>

@@ -1,0 +1,21 @@
+{
+    "name": "Void2610.TypingGame",
+    "rootNamespace": "Void2610.TypingGame",
+    "references": [
+        "Void2610.TypingLib",
+        "R3.Unity",
+        "VContainer",
+        "VContainer.Unity",
+        "UniTask",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

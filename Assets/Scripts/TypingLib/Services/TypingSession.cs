@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using R3;
+using UnityEngine;
 using Void2610.TypingLib.Core.Interfaces;
 using Void2610.TypingLib.Core.Models;
 
@@ -125,7 +126,7 @@ namespace Void2610.TypingLib.Services
 
         public void EndSession()
         {
-            if (_state.Value == SessionState.Idle || _state.Value == SessionState.Completed)
+            if (_state.Value is SessionState.Idle or SessionState.Completed)
             {
                 return;
             }
