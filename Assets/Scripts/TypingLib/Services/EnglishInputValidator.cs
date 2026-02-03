@@ -16,8 +16,14 @@ namespace Void2610.TypingLib.Services
         /// <summary>
         /// 入力文字を検証する
         /// </summary>
-        public InputResult Validate(char input, char expected)
+        public InputResult Validate(char input, string remainingText)
         {
+            if (string.IsNullOrEmpty(remainingText))
+            {
+                return InputResult.Ignored(input);
+            }
+
+            var expected = remainingText[0];
             bool isCorrect;
 
             if (IsCaseSensitive)

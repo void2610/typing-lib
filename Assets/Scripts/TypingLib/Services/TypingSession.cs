@@ -88,12 +88,12 @@ namespace Void2610.TypingLib.Services
                 return InputResult.Ignored(input);
             }
 
-            var expectedChar = currentQ.InputText[_currentPosition.CurrentValue];
-            var result = _inputValidator.Validate(input, expectedChar);
+            var remainingText = currentQ.InputText.Substring(_currentPosition.CurrentValue);
+            var result = _inputValidator.Validate(input, remainingText);
 
             if (result.IsCorrect)
             {
-                _currentPosition.Value++;
+                _currentPosition.Value += result.ConsumedCount;
                 SkipCharactersAtCurrentPosition();
 
                 if (_currentPosition.CurrentValue >= currentQ.Length)

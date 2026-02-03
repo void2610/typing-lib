@@ -26,7 +26,7 @@ namespace Void2610.TypingLib.Tests.Services
             _validator.IsCaseSensitive = true;
 
             // Act
-            var result = _validator.Validate('a', 'a');
+            var result = _validator.Validate('a', "abc");
 
             // Assert
             Assert.That(result.IsCorrect, Is.True);
@@ -40,7 +40,7 @@ namespace Void2610.TypingLib.Tests.Services
             _validator.IsCaseSensitive = true;
 
             // Act
-            var result = _validator.Validate('b', 'a');
+            var result = _validator.Validate('b', "abc");
 
             // Assert
             Assert.That(result.IsCorrect, Is.False);
@@ -55,7 +55,7 @@ namespace Void2610.TypingLib.Tests.Services
             _validator.IsCaseSensitive = true;
 
             // Act
-            var result = _validator.Validate('A', 'a');
+            var result = _validator.Validate('A', "abc");
 
             // Assert
             Assert.That(result.IsCorrect, Is.False);
@@ -70,7 +70,7 @@ namespace Void2610.TypingLib.Tests.Services
             _validator.IsCaseSensitive = true;
 
             // Act
-            var result = _validator.Validate('a', 'A');
+            var result = _validator.Validate('a', "ABC");
 
             // Assert
             Assert.That(result.IsCorrect, Is.False);
@@ -89,7 +89,7 @@ namespace Void2610.TypingLib.Tests.Services
             _validator.IsCaseSensitive = false;
 
             // Act
-            var result = _validator.Validate('a', 'a');
+            var result = _validator.Validate('a', "abc");
 
             // Assert
             Assert.That(result.IsCorrect, Is.True);
@@ -103,7 +103,7 @@ namespace Void2610.TypingLib.Tests.Services
             _validator.IsCaseSensitive = false;
 
             // Act
-            var result = _validator.Validate('A', 'a');
+            var result = _validator.Validate('A', "abc");
 
             // Assert
             Assert.That(result.IsCorrect, Is.True);
@@ -117,7 +117,7 @@ namespace Void2610.TypingLib.Tests.Services
             _validator.IsCaseSensitive = false;
 
             // Act
-            var result = _validator.Validate('a', 'A');
+            var result = _validator.Validate('a', "ABC");
 
             // Assert
             Assert.That(result.IsCorrect, Is.True);
@@ -131,7 +131,7 @@ namespace Void2610.TypingLib.Tests.Services
             _validator.IsCaseSensitive = false;
 
             // Act
-            var result = _validator.Validate('b', 'a');
+            var result = _validator.Validate('b', "abc");
 
             // Assert
             Assert.That(result.IsCorrect, Is.False);
@@ -150,7 +150,7 @@ namespace Void2610.TypingLib.Tests.Services
             _validator.IsCaseSensitive = true;
 
             // Act
-            var result = _validator.Validate('1', '1');
+            var result = _validator.Validate('1', "123");
 
             // Assert
             Assert.That(result.IsCorrect, Is.True);
@@ -163,7 +163,7 @@ namespace Void2610.TypingLib.Tests.Services
             _validator.IsCaseSensitive = true;
 
             // Act
-            var result = _validator.Validate('!', '!');
+            var result = _validator.Validate('!', "!@#");
 
             // Assert
             Assert.That(result.IsCorrect, Is.True);
@@ -176,10 +176,34 @@ namespace Void2610.TypingLib.Tests.Services
             _validator.IsCaseSensitive = true;
 
             // Act
-            var result = _validator.Validate(' ', ' ');
+            var result = _validator.Validate(' ', " ab");
 
             // Assert
             Assert.That(result.IsCorrect, Is.True);
+        }
+
+        #endregion
+
+        #region 空・null テスト
+
+        [Test]
+        public void Validate_空文字列_Ignoredを返す()
+        {
+            // Act
+            var result = _validator.Validate('a', "");
+
+            // Assert
+            Assert.That(result.IsIgnored, Is.True);
+        }
+
+        [Test]
+        public void Validate_null_Ignoredを返す()
+        {
+            // Act
+            var result = _validator.Validate('a', null);
+
+            // Assert
+            Assert.That(result.IsIgnored, Is.True);
         }
 
         #endregion

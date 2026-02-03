@@ -25,18 +25,29 @@ namespace Void2610.TypingLib.Core.Models
         /// </summary>
         public bool IsIgnored { get; }
 
-        private InputResult(bool isCorrect, char inputChar, char expectedChar, bool isIgnored)
+        /// <summary>
+        /// 消費した文字数（拗音など複数文字変換時に使用）
+        /// </summary>
+        public int ConsumedCount { get; }
+
+        private InputResult(bool isCorrect, char inputChar, char expectedChar, bool isIgnored, int consumedCount = 1)
         {
             IsCorrect = isCorrect;
             InputChar = inputChar;
             ExpectedChar = expectedChar;
             IsIgnored = isIgnored;
+            ConsumedCount = consumedCount;
         }
 
         /// <summary>
         /// 正解の入力結果を作成する
         /// </summary>
         public static InputResult Correct(char inputChar) => new InputResult(true, inputChar, inputChar, false);
+
+        /// <summary>
+        /// 正解の入力結果を作成する（消費文字数指定）
+        /// </summary>
+        public static InputResult Correct(char inputChar, int consumedCount) => new InputResult(true, inputChar, inputChar, false, consumedCount);
 
         /// <summary>
         /// 不正解の入力結果を作成する
@@ -46,6 +57,6 @@ namespace Void2610.TypingLib.Core.Models
         /// <summary>
         /// 無視された入力結果を作成する
         /// </summary>
-        public static InputResult Ignored(char inputChar) => new InputResult(false, inputChar, '\0', true);
+        public static InputResult Ignored(char inputChar) => new InputResult(false, inputChar, '\0', true, 0);
     }
 }

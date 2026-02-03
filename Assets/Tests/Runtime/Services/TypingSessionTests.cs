@@ -491,5 +491,100 @@ namespace Void2610.TypingLib.Tests.Services
         }
 
         #endregion
+
+        #region 日本語入力（拗音）テスト
+
+        [Test]
+        public void ProcessInput_拗音_位置が2文字分進む()
+        {
+            // Arrange
+            var japaneseValidator = new JapaneseInputValidator();
+            var session = new TypingSession(japaneseValidator);
+            // 「きょう」= 3文字（き、ょ、う）
+            var questions = new List<TypingQuestion> { new TypingQuestion("きょう", "きょう") };
+            session.StartSession(questions);
+
+            // Act: kyo を入力
+            session.ProcessInput('k');
+            session.ProcessInput('y');
+            var result = session.ProcessInput('o');
+
+            // Assert: 「きょ」の2文字分が消費されて位置が2になる
+            Assert.That(result.IsCorrect, Is.True);
+            Assert.That(session.CurrentPosition.CurrentValue, Is.EqualTo(2));
+            Assert.That(session.ExpectedChar, Is.EqualTo('う'));
+
+            session.Dispose();
+        }
+
+        [Test]
+        public void ProcessInput_拗音含む文字列_正しく完了する()
+        {
+            // Arrange
+            var japaneseValidator = new JapaneseInputValidator();
+            var session = new TypingSession(japaneseValidator);
+            var questions = new List<TypingQuestion> { new TypingQuestion("きょう", "きょう") };
+            session.StartSession(questions);
+
+            var completed = false;
+            using var subscription = session.OnSessionCompleted.Subscribe(_ => completed = true);
+
+            // Act: kyou を入力
+            session.ProcessInput('k');
+            session.ProcessInput('y');
+            session.ProcessInput('o');
+            session.ProcessInput('u');
+
+            // Assert
+            Assert.That(completed, Is.True);
+            Assert.That(session.State.CurrentValue, Is.EqualTo(SessionState.Completed));
+
+            session.Dispose();
+        }
+
+        [Test]
+        public void ProcessInput_しゃ行_位置が2文字分進む()
+        {
+            // Arrange
+            var japaneseValidator = new JapaneseInputValidator();
+            var session = new TypingSession(japaneseValidator);
+            var questions = new List<TypingQuestion> { new TypingQuestion("しゃしん", "しゃしん") };
+            session.StartSession(questions);
+
+            // Act: sha を入力
+            session.ProcessInput('s');
+            session.ProcessInput('h');
+            var result = session.ProcessInput('a');
+
+            // Assert: 「しゃ」の2文字分が消費されて位置が2になる
+            Assert.That(result.IsCorrect, Is.True);
+            Assert.That(session.CurrentPosition.CurrentValue, Is.EqualTo(2));
+            Assert.That(session.ExpectedChar, Is.EqualTo('し'));
+
+            session.Dispose();
+        }
+
+        [Test]
+        public void ProcessInput_日本語単純な入力_位置が1文字分進む()
+        {
+            // Arrange
+            var japaneseValidator = new JapaneseInputValidator();
+            var session = new TypingSession(japaneseValidator);
+            var questions = new List<TypingQuestion> { new TypingQuestion("かき", "かき") };
+            session.StartSession(questions);
+
+            // Act: ka を入力
+            session.ProcessInput('k');
+            var result = session.ProcessInput('a');
+
+            // Assert: 「か」の1文字分が消費されて位置が1になる
+            Assert.That(result.IsCorrect, Is.True);
+            Assert.That(session.CurrentPosition.CurrentValue, Is.EqualTo(1));
+            Assert.That(session.ExpectedChar, Is.EqualTo('き'));
+
+            session.Dispose();
+        }
+
+        #endregion
     }
 }

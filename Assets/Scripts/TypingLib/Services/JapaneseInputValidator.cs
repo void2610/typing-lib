@@ -26,10 +26,17 @@ namespace Void2610.TypingLib.Services
         /// 入力文字を検証する
         /// </summary>
         /// <param name="input">入力されたローマ字</param>
-        /// <param name="expected">期待されるひらがな</param>
+        /// <param name="remainingText">残りの入力対象テキスト</param>
         /// <returns>入力結果</returns>
-        public InputResult Validate(char input, char expected)
+        public InputResult Validate(char input, string remainingText)
         {
+            if (string.IsNullOrEmpty(remainingText))
+            {
+                return InputResult.Ignored(input);
+            }
+
+            var expected = remainingText[0];
+
             // 小文字に正規化
             var normalizedInput = char.ToLower(input);
             _buffer.Append(normalizedInput);
@@ -37,7 +44,7 @@ namespace Void2610.TypingLib.Services
             var bufferStr = _buffer.ToString();
 
             // 「n」の特殊処理: "n" + 子音 → 「ん」+ 次の処理
-            if (TryHandleNConsonant(bufferStr, expected, out var nResult))
+            if (TryHandleNConsonant(bufferStr, remainingText, out var nResult))
             {
                 return nResult;
             }
@@ -47,10 +54,10 @@ namespace Void2610.TypingLib.Services
             {
                 _buffer.Clear();
 
-                // 変換されたひらがなが期待文字と一致するか
-                if (hiragana.Length > 0 && hiragana[0] == expected)
+                // 変換されたひらがなが残りのテキストの先頭と一致するか
+                if (hiragana.Length > 0 && remainingText.StartsWith(hiragana))
                 {
-                    return InputResult.Correct(input);
+                    return InputResult.Correct(input, hiragana.Length);
                 }
                 return InputResult.Incorrect(input, expected);
             }
@@ -75,13 +82,10 @@ namespace Void2610.TypingLib.Services
         /// 「n」+ 子音 パターンの処理
         /// 例: "nk" → 「ん」を確定し、"k" をバッファに残す
         /// </summary>
-        /// <param name="bufferStr">現在のバッファ</param>
-        /// <param name="expected">期待されるひらがな</param>
-        /// <param name="result">処理結果</param>
-        /// <returns>処理した場合はtrue</returns>
-        private bool TryHandleNConsonant(string bufferStr, char expected, out InputResult result)
+        private bool TryHandleNConsonant(string bufferStr, string remainingText, out InputResult result)
         {
             result = default;
+            var expected = remainingText[0];
 
             // バッファが "n" + 何か の形式で、「ん」を確定できるパターンかチェック
             if (bufferStr.Length >= 2 && bufferStr[0] == 'n')
@@ -97,7 +101,7 @@ namespace Void2610.TypingLib.Services
                         // 「ん」を確定し、残りの文字をバッファに残す
                         _buffer.Clear();
                         _buffer.Append(bufferStr.Substring(1));
-                        result = InputResult.Correct(bufferStr[1]);
+                        result = InputResult.Correct(bufferStr[1], 1);
                         return true;
                     }
 
