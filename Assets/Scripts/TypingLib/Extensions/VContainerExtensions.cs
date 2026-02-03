@@ -11,7 +11,7 @@ namespace Void2610.TypingLib.Extensions
     public static class VContainerExtensions
     {
         /// <summary>
-        /// TypingLibのサービスをカスタム設定でDIコンテナに登録する
+        /// TypingLibのサービスをカスタム設定でDIコンテナに登録する（英語入力用）
         /// </summary>
         /// <param name="builder">コンテナビルダー</param>
         /// <param name="settings">セッション設定</param>
@@ -23,6 +23,27 @@ namespace Void2610.TypingLib.Extensions
             Lifetime sessionLifetime = Lifetime.Scoped)
         {
             builder.Register<EnglishInputValidator>(Lifetime.Singleton).As<IInputValidator>();
+            builder.RegisterInstance(settings);
+            builder.Register<TypingSession>(sessionLifetime).As<ITypingSession>();
+
+            return builder;
+        }
+
+        /// <summary>
+        /// TypingLibのサービスをカスタム設定でDIコンテナに登録する（日本語入力用）
+        /// </summary>
+        /// <param name="builder">コンテナビルダー</param>
+        /// <param name="settings">セッション設定</param>
+        /// <param name="sessionLifetime">セッションのライフタイム</param>
+        /// <returns>コンテナビルダー（メソッドチェーン用）</returns>
+        public static IContainerBuilder RegisterTypingLibJapanese(
+            this IContainerBuilder builder,
+            TypingSessionSettings settings,
+            Lifetime sessionLifetime = Lifetime.Scoped)
+        {
+            builder.Register<JapaneseInputValidator>(Lifetime.Singleton)
+                .As<IInputValidator>()
+                .As<IJapaneseInputValidator>();
             builder.RegisterInstance(settings);
             builder.Register<TypingSession>(sessionLifetime).As<ITypingSession>();
 

@@ -13,6 +13,7 @@ namespace Void2610.TypingGame
     public class TypingGamePresenter : ITickable, IStartable, IDisposable
     {
         private readonly ITypingSession _session;
+        private readonly IJapaneseInputValidator _japaneseValidator;
         private readonly TypingGameView _view;
         private readonly CompositeDisposable _disposables = new();
 
@@ -21,16 +22,17 @@ namespace Void2610.TypingGame
         private int _questionCount;
         private int _currentQuestionIndex;
 
-        public TypingGamePresenter(ITypingSession session)
+        public TypingGamePresenter(ITypingSession session, IJapaneseInputValidator japaneseValidator)
         {
             _view = Object.FindAnyObjectByType<TypingGameView>();
 
             _session = session;
+            _japaneseValidator = japaneseValidator;
 
             _session.CurrentQuestion.Subscribe(OnQuestionChanged).AddTo(_disposables);
             _session.CurrentPosition.Subscribe(_ => UpdateDisplay()).AddTo(_disposables);
             _session.OnInput.Subscribe(OnInput).AddTo(_disposables);
-            _session.OnQuestionCompleted.Subscribe(_ => _currentQuestionIndex++).AddTo(_disposables);
+            _session.OnQuestionCompleted.Subscribe(_ => OnQuestionCompleted()).AddTo(_disposables);
             _session.OnSessionCompleted.Subscribe(_ => OnSessionCompleted()).AddTo(_disposables);
         }
 
@@ -50,6 +52,12 @@ namespace Void2610.TypingGame
                 if (char.IsControl(c)) continue;
                 _session.ProcessInput(c);
             }
+        }
+
+        public void Dispose()
+        {
+            _disposables.Dispose();
+            _session.Dispose();
         }
 
         private async UniTask WaitAndStartSession()
@@ -73,11 +81,23 @@ namespace Void2610.TypingGame
 
         private void OnInput(InputResult result)
         {
-            if (result.IsIgnored) return;
+            if (result.IsIgnored)
+            {
+                // 未確定入力でも表示を更新
+                UpdateDisplay();
+                return;
+            }
 
             if (result.IsCorrect) _correctCount++;
             else _missCount++;
-            UpdateStatus();
+            UpdateDisplay();
+        }
+
+        private void OnQuestionCompleted()
+        {
+            _currentQuestionIndex++;
+            // 問題が完了したらバッファをクリア
+            _japaneseValidator.ClearBuffer();
         }
 
         private void OnSessionCompleted()
@@ -97,10 +117,15 @@ namespace Void2610.TypingGame
             if (question == null) return;
 
             var pos = _session.CurrentPosition.CurrentValue;
-            var text = question.InputText;
+            var inputText = question.InputText;
+            var pendingRomaji = _japaneseValidator.PendingInput;
 
-            _view.SetTypedText(text.Substring(0, pos));
-            _view.SetRemainingText(pos < text.Length ? text.Substring(pos) : string.Empty);
+            // 入力済みのひらがな + 未確定のローマ字
+            var typedText = inputText.Substring(0, pos) + pendingRomaji;
+            _view.SetTypedText(typedText);
+
+            // 残りのひらがな
+            _view.SetRemainingText(pos < inputText.Length ? inputText.Substring(pos) : string.Empty);
             UpdateStatus();
         }
 
@@ -117,18 +142,12 @@ namespace Void2610.TypingGame
         {
             return new List<TypingQuestion>
             {
-                new("Hello, World!"),
-                new("The quick brown fox"),
-                new("jumps over the lazy dog"),
-                new("Programming is fun!"),
-                new("Unity Game Engine"),
+                new("桜", "さくら"),
+                new("東京", "とうきょう"),
+                new("散歩", "さんぽ"),
+                new("学校", "がっこう"),
+                new("日本語", "にほんご"),
             };
-        }
-        
-        public void Dispose()
-        {
-            _disposables.Dispose();
-            _session.Dispose();
         }
     }
 }
