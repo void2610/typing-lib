@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using R3;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using VContainer.Unity;
 using Void2610.TypingLib.Core.Interfaces;
 using Void2610.TypingLib.Core.Models;
@@ -22,6 +23,9 @@ namespace Void2610.TypingGame
         private int _questionCount;
         private int _currentQuestionIndex;
 
+        // テキスト入力バッファ（onTextInputイベントから受け取った文字を蓄積）
+        private readonly Queue<char> _inputBuffer = new();
+
         public TypingGamePresenter(ITypingSession session, IJapaneseInputValidator japaneseValidator)
         {
             _view = Object.FindAnyObjectByType<TypingGameView>();
@@ -34,6 +38,26 @@ namespace Void2610.TypingGame
             _session.OnInput.Subscribe(OnInput).AddTo(_disposables);
             _session.OnQuestionCompleted.Subscribe(_ => OnQuestionCompleted()).AddTo(_disposables);
             _session.OnSessionCompleted.Subscribe(_ => OnSessionCompleted()).AddTo(_disposables);
+
+            // Keyboard.onTextInputを購読してテキスト入力を取得
+            // これはOSレベルでテキスト入力を取得するため、macOSのInput.inputString問題を回避できる
+            var keyboard = Keyboard.current;
+            if (keyboard != null)
+            {
+                keyboard.onTextInput += OnTextInput;
+            }
+        }
+
+        /// <summary>
+        /// Keyboard.onTextInputイベントハンドラ
+        /// </summary>
+        private void OnTextInput(char c)
+        {
+            // 制御文字は無視
+            if (!char.IsControl(c))
+            {
+                _inputBuffer.Enqueue(c);
+            }
         }
 
         public void Start()
@@ -47,15 +71,24 @@ namespace Void2610.TypingGame
 
         public void Tick()
         {
-            foreach (var c in Input.inputString)
+            // onTextInputイベントで蓄積された入力を処理
+            // これによりmacOSでInput.inputStringが空になる問題を回避
+            while (_inputBuffer.Count > 0)
             {
-                if (char.IsControl(c)) continue;
+                var c = _inputBuffer.Dequeue();
                 _session.ProcessInput(c);
             }
         }
 
         public void Dispose()
         {
+            // onTextInputイベントの購読を解除
+            var keyboard = Keyboard.current;
+            if (keyboard != null)
+            {
+                keyboard.onTextInput -= OnTextInput;
+            }
+
             _disposables.Dispose();
             _session.Dispose();
         }

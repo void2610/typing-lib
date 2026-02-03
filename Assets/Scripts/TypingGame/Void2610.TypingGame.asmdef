@@ -5,9 +5,9 @@
         "Void2610.TypingLib",
         "R3.Unity",
         "VContainer",
-        "VContainer.Unity",
         "UniTask",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

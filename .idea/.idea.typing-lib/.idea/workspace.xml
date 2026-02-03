@@ -7,6 +7,7 @@
     <list default="true" id="7fe1dea8-ffca-4182-b608-ef07216fea55" name="変更" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.typing-lib/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.typing-lib/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/TypingGame/TypingGamePresenter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/TypingGame/TypingGamePresenter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TypingGame/Void2610.TypingGame.asmdef" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/TypingGame/Void2610.TypingGame.asmdef" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
