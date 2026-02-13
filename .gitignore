@@ -75,3 +75,4 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 .idea/.idea.typing-lib/.idea/workspace.xml
 .idea/.idea.typing-lib/.idea/workspace.xml
+/.uloop/outputs
