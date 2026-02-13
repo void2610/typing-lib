@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 using VContainer.Unity;
 using Void2610.TypingLib.Core.Interfaces;
 using Void2610.TypingLib.Core.Models;
+using Void2610.UnityTemplate;
 using Object = UnityEngine.Object;
 
 namespace Void2610.TypingGame
@@ -121,8 +122,16 @@ namespace Void2610.TypingGame
                 return;
             }
 
-            if (result.IsCorrect) _correctCount++;
-            else _missCount++;
+            if (result.IsCorrect)
+            {
+                _correctCount++;
+                // 正解時にカメラを揺らす
+                CameraShake.Instance.ShakeCamera(0.3f, 0.15f, 20, 0.5f);
+            }
+            else
+            {
+                _missCount++;
+            }
             UpdateDisplay();
         }
 
