@@ -1,0 +1,37 @@
+{
+  "name": "com.void2610.typing-lib",
+  "version": "1.0.0",
+  "displayName": "Void2610 Typing Library",
+  "description": "Unityで再利用可能なタイピングゲームライブラリ。MVP（Model-View-Presenter）パターンを採用し、英語・日本語（ローマ字）入力に対応。",
+  "unity": "6000.0",
+  "keywords": [
+    "typing",
+    "game",
+    "mvp",
+    "japanese",
+    "romaji",
+    "input",
+    "validator",
+    "reactive"
+  ],
+  "author": {
+    "name": "void2610",
+    "url": "https://github.com/void2610"
+  },
+  "dependencies": {
+    "jp.hadashikick.vcontainer": "1.15.4",
+    "com.cysharp.r3": "1.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/void2610/typing-lib.git"
+  },
+  "license": "MIT",
+  "samples": [
+    {
+      "displayName": "Basic English Typing",
+      "description": "基本的な英語タイピングゲームのサンプル実装",
+      "path": "Samples~/BasicEnglishTyping"
+    }
+  ]
+}
