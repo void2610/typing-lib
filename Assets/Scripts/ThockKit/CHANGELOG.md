@@ -63,4 +63,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MVPパターンによるアーキテクチャ
 - UI非依存のコアライブラリ設計
 
-[1.0.0]: https://github.com/void2610/typing-lib/releases/tag/v1.0.0
+[1.0.0]: https://github.com/void2610/thock-kit/releases/tag/v1.0.0

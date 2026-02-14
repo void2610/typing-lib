@@ -24,7 +24,7 @@ Unityで再利用可能なタイピングゲームライブラリ。MVP（Model-
 4. 以下のURLを入力:
 
 ```
-https://github.com/void2610/typing-lib.git?path=Assets/Scripts/ThockKit
+https://github.com/void2610/thock-kit.git?path=Assets/Scripts/ThockKit
 ```
 
 ### 依存パッケージ
@@ -254,7 +254,7 @@ MIT License - 詳細は [LICENSE.md](LICENSE.md) を参照してください。
 
 ## 🔗 関連リンク
 
-- [GitHub Repository](https://github.com/void2610/typing-lib)
+- [GitHub Repository](https://github.com/void2610/thock-kit)
 - [VContainer](https://github.com/hadashiA/VContainer)
 - [R3](https://github.com/Cysharp/R3)
 - [UniTask](https://github.com/Cysharp/UniTask)
