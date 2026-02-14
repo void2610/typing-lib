@@ -1,0 +1,20 @@
+{
+    "name": "Void2610.TypingLib.Samples.BasicEnglishTyping",
+    "rootNamespace": "Void2610.TypingLib.Samples.BasicEnglishTyping",
+    "references": [
+        "Void2610.TypingLib",
+        "R3.Unity",
+        "VContainer",
+        "Unity.InputSystem",
+        "UniTask"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
