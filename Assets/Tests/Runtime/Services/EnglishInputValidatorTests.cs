@@ -1,7 +1,7 @@
 using NUnit.Framework;
-using Void2610.TypingLib.Services;
+using Void2610.ThockKit.Services;
 
-namespace Void2610.TypingLib.Tests.Services
+namespace Void2610.ThockKit.Tests.Services
 {
     /// <summary>
     /// EnglishInputValidator のユニットテスト

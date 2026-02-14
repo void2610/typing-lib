@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using NUnit.Framework;
-using Void2610.TypingLib.Core.Models;
+using Void2610.ThockKit.Core.Models;
 
-namespace Void2610.TypingLib.Tests.Models
+namespace Void2610.ThockKit.Tests.Models
 {
     /// <summary>
     /// TypingQuestion のユニットテスト

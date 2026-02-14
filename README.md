@@ -1,4 +1,4 @@
-# Void2610 Typing Library
+# ThockKit
 
 [![Unity Version](https://img.shields.io/badge/Unity-6000.0%2B-blue)](https://unity.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -25,7 +25,7 @@ Unityで再利用可能なタイピングゲームライブラリ。MVP（Model-
 4. 以下のURLを入力:
 
 ```
-https://github.com/void2610/typing-lib.git?path=Assets/Scripts/TypingLib
+https://github.com/void2610/typing-lib.git?path=Assets/Scripts/ThockKit
 ```
 
 ### 依存パッケージ
@@ -42,15 +42,15 @@ https://github.com/void2610/typing-lib.git?path=Assets/Scripts/TypingLib
 ```csharp
 using VContainer;
 using VContainer.Unity;
-using Void2610.TypingLib.Core.Models;
-using Void2610.TypingLib.Extensions;
+using Void2610.ThockKit.Core.Models;
+using Void2610.ThockKit.Extensions;
 
 public class TypingLifetimeScope : LifetimeScope
 {
     protected override void Configure(IContainerBuilder builder)
     {
-        // TypingLibを登録（英語入力）
-        builder.RegisterTypingLib(TypingSessionSettings.Default);
+        // ThockKitを登録（英語入力）
+        builder.RegisterThockKit(TypingSessionSettings.Default);
 
         // Presenterを登録
         builder.RegisterEntryPoint<TypingPresenter>();
@@ -63,20 +63,20 @@ public class TypingLifetimeScope : LifetimeScope
 ```csharp
 protected override void Configure(IContainerBuilder builder)
 {
-    // TypingLibを登録（日本語入力）
-    builder.RegisterTypingLibJapanese(TypingSessionSettings.Default);
+    // ThockKitを登録（日本語入力）
+    builder.RegisterThockKitJapanese(TypingSessionSettings.Default);
 
     builder.RegisterEntryPoint<TypingPresenter>();
 }
 ```
 
-詳細は [パッケージドキュメント](Assets/Scripts/TypingLib/README.md) を参照してください。
+詳細は [パッケージドキュメント](Assets/Scripts/ThockKit/README.md) を参照してください。
 
 ## 📚 ドキュメント
 
-- **[パッケージREADME](Assets/Scripts/TypingLib/README.md)** - 完全なAPI説明とクイックスタート
-- **[CHANGELOG](Assets/Scripts/TypingLib/CHANGELOG.md)** - バージョン履歴
-- **[サンプル](Assets/Scripts/TypingLib/Samples~/README.md)** - 実装例とセットアップガイド
+- **[パッケージREADME](Assets/Scripts/ThockKit/README.md)** - 完全なAPI説明とクイックスタート
+- **[CHANGELOG](Assets/Scripts/ThockKit/CHANGELOG.md)** - バージョン履歴
+- **[サンプル](Assets/Scripts/ThockKit/Samples~/README.md)** - 実装例とセットアップガイド
 
 ## 🎮 サンプル
 
@@ -96,13 +96,13 @@ View (MonoBehaviour)     ← UI表示のみ担当
     ↑
 Presenter (ITickable)    ← 入力処理、セッション管理、View更新指示
     ↓
-Model (TypingLib)        ← ビジネスロジック（UI依存なし）
+Model (ThockKit)        ← ビジネスロジック（UI依存なし）
 ```
 
 ### ディレクトリ構造
 
 ```
-Assets/Scripts/TypingLib/          # パッケージルート
+Assets/Scripts/ThockKit/          # パッケージルート
 ├── Core/                          # コアライブラリ
 │   ├── Interfaces/               # インターフェース定義
 │   │   ├── ITypingSession.cs
@@ -180,11 +180,11 @@ Issue、Pull Requestを歓迎します！
 
 ## 📄 ライセンス
 
-このプロジェクトはMITライセンスの下で公開されています。詳細は [LICENSE](Assets/Scripts/TypingLib/LICENSE.md) を参照してください。
+このプロジェクトはMITライセンスの下で公開されています。詳細は [LICENSE](Assets/Scripts/ThockKit/LICENSE.md) を参照してください。
 
 ## 🔗 関連リンク
 
-- [パッケージドキュメント](Assets/Scripts/TypingLib/README.md)
+- [パッケージドキュメント](Assets/Scripts/ThockKit/README.md)
 - [VContainer](https://github.com/hadashiA/VContainer)
 - [R3](https://github.com/Cysharp/R3)
 - [UniTask](https://github.com/Cysharp/UniTask)

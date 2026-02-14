@@ -1,7 +1,7 @@
 using VContainer;
 using VContainer.Unity;
-using Void2610.TypingLib.Core.Models;
-using Void2610.TypingLib.Extensions;
+using Void2610.ThockKit.Core.Models;
+using Void2610.ThockKit.Extensions;
 
 namespace Void2610.TypingGame
 {
@@ -10,7 +10,7 @@ namespace Void2610.TypingGame
         protected override void Configure(IContainerBuilder builder)
         {
             var settings = new TypingSessionSettings(true, true, false);
-            builder.RegisterTypingLibJapanese(settings);
+            builder.RegisterThockKitJapanese(settings);
 
             builder.RegisterEntryPoint<TypingGamePresenter>();
         }

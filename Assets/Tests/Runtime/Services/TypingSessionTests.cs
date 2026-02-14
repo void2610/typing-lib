@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using R3;
-using Void2610.TypingLib.Core.Models;
-using Void2610.TypingLib.Services;
+using Void2610.ThockKit.Core.Models;
+using Void2610.ThockKit.Services;
 
-namespace Void2610.TypingLib.Tests.Services
+namespace Void2610.ThockKit.Tests.Services
 {
     /// <summary>
     /// TypingSession のユニットテスト

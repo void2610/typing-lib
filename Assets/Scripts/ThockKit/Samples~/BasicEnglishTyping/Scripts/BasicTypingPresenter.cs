@@ -7,16 +7,16 @@ using UnityEngine.InputSystem;
 using VContainer.Unity;
 using Void2610.ThockKit.Core.Interfaces;
 using Void2610.ThockKit.Core.Models;
-using Void2610.UnityTemplate;
-using Object = UnityEngine.Object;
 
-namespace Void2610.TypingGame
+namespace Void2610.ThockKit.Samples.BasicEnglishTyping
 {
-    public class TypingGamePresenter : ITickable, IStartable, IDisposable
+    /// <summary>
+    /// 基本的な英語タイピングのサンプル実装
+    /// </summary>
+    public class BasicTypingPresenter : ITickable, IStartable, IDisposable
     {
         private readonly ITypingSession _session;
-        private readonly IJapaneseInputValidator _japaneseValidator;
-        private readonly TypingGameView _view;
+        private readonly BasicTypingView _view;
         private readonly CompositeDisposable _disposables = new();
 
         private int _correctCount;
@@ -24,24 +24,22 @@ namespace Void2610.TypingGame
         private int _questionCount;
         private int _currentQuestionIndex;
 
-        // テキスト入力バッファ（onTextInputイベントから受け取った文字を蓄積）
+        // テキスト入力バッファ
         private readonly Queue<char> _inputBuffer = new();
 
-        public TypingGamePresenter(ITypingSession session, IJapaneseInputValidator japaneseValidator)
+        public BasicTypingPresenter(ITypingSession session, BasicTypingView view)
         {
-            _view = Object.FindAnyObjectByType<TypingGameView>();
-
             _session = session;
-            _japaneseValidator = japaneseValidator;
+            _view = view;
 
+            // セッションイベントの購読
             _session.CurrentQuestion.Subscribe(OnQuestionChanged).AddTo(_disposables);
             _session.CurrentPosition.Subscribe(_ => UpdateDisplay()).AddTo(_disposables);
             _session.OnInput.Subscribe(OnInput).AddTo(_disposables);
             _session.OnQuestionCompleted.Subscribe(_ => OnQuestionCompleted()).AddTo(_disposables);
             _session.OnSessionCompleted.Subscribe(_ => OnSessionCompleted()).AddTo(_disposables);
 
-            // Keyboard.onTextInputを購読してテキスト入力を取得
-            // これはOSレベルでテキスト入力を取得するため、macOSのInput.inputString問題を回避できる
+            // キーボード入力の購読
             var keyboard = Keyboard.current;
             if (keyboard != null)
             {
@@ -50,7 +48,7 @@ namespace Void2610.TypingGame
         }
 
         /// <summary>
-        /// Keyboard.onTextInputイベントハンドラ
+        /// キーボード入力イベントハンドラ
         /// </summary>
         private void OnTextInput(char c)
         {
@@ -72,8 +70,7 @@ namespace Void2610.TypingGame
 
         public void Tick()
         {
-            // onTextInputイベントで蓄積された入力を処理
-            // これによりmacOSでInput.inputStringが空になる問題を回避
+            // 入力バッファの処理
             while (_inputBuffer.Count > 0)
             {
                 var c = _inputBuffer.Dequeue();
@@ -83,7 +80,7 @@ namespace Void2610.TypingGame
 
         public void Dispose()
         {
-            // onTextInputイベントの購読を解除
+            // キーボード入力の購読解除
             var keyboard = Keyboard.current;
             if (keyboard != null)
             {
@@ -115,18 +112,11 @@ namespace Void2610.TypingGame
 
         private void OnInput(InputResult result)
         {
-            if (result.IsIgnored)
-            {
-                // 未確定入力でも表示を更新
-                UpdateDisplay();
-                return;
-            }
+            if (result.IsIgnored) return;
 
             if (result.IsCorrect)
             {
                 _correctCount++;
-                // 正解時にカメラを揺らす
-                CameraShake.Instance.ShakeCamera(0.3f, 0.15f, 20, 0.5f);
             }
             else
             {
@@ -138,8 +128,6 @@ namespace Void2610.TypingGame
         private void OnQuestionCompleted()
         {
             _currentQuestionIndex++;
-            // 問題が完了したらバッファをクリア
-            _japaneseValidator.ClearBuffer();
         }
 
         private void OnSessionCompleted()
@@ -150,7 +138,10 @@ namespace Void2610.TypingGame
 
             _view.SetTypedText("Complete!");
             _view.SetRemainingText("Press any key to retry");
-            _view.SetStatus($"正解: {_correctCount}  ミス: {_missCount}  正解率: {accuracy:P1}");
+            _view.SetStatus($"Correct: {_correctCount}  Miss: {_missCount}  Accuracy: {accuracy:P1}");
+
+            // リトライ待機
+            WaitAndStartSession().Forget();
         }
 
         private void UpdateDisplay()
@@ -160,13 +151,12 @@ namespace Void2610.TypingGame
 
             var pos = _session.CurrentPosition.CurrentValue;
             var inputText = question.InputText;
-            var pendingRomaji = _japaneseValidator.PendingInput;
 
-            // 入力済みのひらがな + 未確定のローマ字
-            var typedText = inputText.Substring(0, pos) + pendingRomaji;
+            // 入力済みテキスト
+            var typedText = inputText.Substring(0, pos);
             _view.SetTypedText(typedText);
 
-            // 残りのひらがな
+            // 残りテキスト
             _view.SetRemainingText(pos < inputText.Length ? inputText.Substring(pos) : string.Empty);
             UpdateStatus();
         }
@@ -177,18 +167,21 @@ namespace Void2610.TypingGame
                 ? (float)_correctCount / (_correctCount + _missCount)
                 : 1f;
 
-            _view.SetStatus($"{_currentQuestionIndex + 1}/{_questionCount}  正解率: {accuracy:P0}");
+            _view.SetStatus($"{_currentQuestionIndex + 1}/{_questionCount}  Accuracy: {accuracy:P0}");
         }
 
         private List<TypingQuestion> CreateSampleQuestions()
         {
             return new List<TypingQuestion>
             {
-                new("桜", "さくら"),
-                new("東京", "とうきょう"),
-                new("散歩", "さんぽ"),
-                new("学校", "がっこう"),
-                new("日本語", "にほんご"),
+                new("hello"),
+                new("world"),
+                new("typing"),
+                new("library"),
+                new("unity"),
+                new("sample"),
+                new("game"),
+                new("complete"),
             };
         }
     }

@@ -1,14 +1,9 @@
 {
-    "name": "Void2610.TypingGame",
-    "rootNamespace": "Void2610.TypingGame",
+    "name": "Void2610.ThockKit",
+    "rootNamespace": "Void2610.ThockKit",
     "references": [
-        "Void2610.ThockKit",
         "R3.Unity",
-        "VContainer",
-        "UniTask",
-        "Unity.TextMeshPro",
-        "Unity.InputSystem",
-        "Void2610.UnityTemplate"
+        "VContainer"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

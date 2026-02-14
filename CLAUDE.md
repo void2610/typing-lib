@@ -19,7 +19,7 @@ Unityで再利用可能なタイピングゲームライブラリ。MVP（Model-
 
 ```
 Assets/Scripts/
-├── TypingLib/          # メインライブラリ（ゲーム実装から独立）
+├── ThockKit/          # メインライブラリ（ゲーム実装から独立）
 │   ├── Core/
 │   │   ├── Models/     # TypingQuestion, SessionState, InputResult, TypingSessionSettings
 │   │   └── Interfaces/ # ITypingSession, IInputValidator, IJapaneseInputValidator
@@ -35,10 +35,10 @@ View (MonoBehaviour)     ← UI表示のみ担当
     ↑
 Presenter (ITickable)    ← 入力処理、セッション管理、View更新指示
     ↓
-Model (TypingLib)        ← ビジネスロジック（UI依存なし）
+Model (ThockKit)        ← ビジネスロジック（UI依存なし）
 ```
 
-- **Model（TypingLib）:** `ITypingSession`でセッション管理、R3のReactivePropertyで状態変更を通知
+- **Model（ThockKit）:** `ITypingSession`でセッション管理、R3のReactivePropertyで状態変更を通知
 - **View（TypingGame）:** `SetTypedText()`, `SetRemainingText()`, `SetStatus()`の3メソッドでUI更新
 - **Presenter（TypingGame）:** VContainerの`ITickable`/`IStartable`を実装、入力イベントを購読してViewを更新
 
@@ -52,10 +52,10 @@ Model (TypingLib)        ← ビジネスロジック（UI依存なし）
 
 ```csharp
 // 英語入力用
-builder.RegisterTypingLib(settings);
+builder.RegisterThockKit(settings);
 
 // 日本語入力用
-builder.RegisterTypingLibJapanese(settings);
+builder.RegisterThockKitJapanese(settings);
 ```
 
 ## 外部依存関係
@@ -73,5 +73,5 @@ builder.RegisterTypingLibJapanese(settings);
 Unity 6000.0系、.NET Framework 4.7.1、C# 9.0
 
 アセンブリ定義:
-- `Void2610.TypingLib`: ライブラリ本体
+- `Void2610.ThockKit`: ライブラリ本体
 - `Void2610.TypingGame`: テスト実装
